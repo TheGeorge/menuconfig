@@ -1002,7 +1002,7 @@ int conf_write_autoconf(const char* filename)
 	fclose(out_h);
 
 	
-	if (rename(".tmpconfig", name)) {
+	if (rename(".tmpconfig.h", name)) {
 		return 1;
 	}
 

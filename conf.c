@@ -445,7 +445,7 @@ static void check_conf(struct menu *menu)
 static struct option long_opts[] = {
 	{"oldaskconfig",    no_argument,       NULL, oldaskconfig},
 	{"oldconfig",       no_argument,       NULL, oldconfig},
-	{"silentoldconfig", no_argument,       NULL, silentoldconfig},
+	{"silentoldconfig", required_argument, NULL, silentoldconfig},
 	{"defconfig",       optional_argument, NULL, defconfig},
 	{"savedefconfig",   required_argument, NULL, savedefconfig},
 	{"allnoconfig",     no_argument,       NULL, allnoconfig},
@@ -499,6 +499,7 @@ int main(int ac, char **av)
 		input_mode = (enum input_mode)opt;
 		switch (opt) {
 		case silentoldconfig:
+			defconfig_file=optarg;
 			sync_kconfig = 1;
 			break;
 		case defconfig:
@@ -672,7 +673,7 @@ int main(int ac, char **av)
 			fprintf(stderr, _("\n*** Error during writing of the configuration.\n\n"));
 			exit(1);
 		}
-		if (conf_write_autoconf("autoconf.h")) {
+		if (conf_write_autoconf(defconfig_file)) {
 			fprintf(stderr, _("\n*** Error during update of the configuration.\n\n"));
 			return 1;
 		}
