@@ -26,6 +26,7 @@ static const char *conf_filename;
 static int conf_lineno, conf_warnings, conf_unsaved;
 
 const char conf_defname[] = "arch/$ARCH/defconfig";
+static char* autoconfig_name= "autoconf.h";
 
 static void conf_warning(const char *fmt, ...)
 {
@@ -70,9 +71,10 @@ const char *conf_get_configname(void)
 
 const char *conf_get_autoconfig_name(void)
 {
-	char *name = getenv("KCONFIG_AUTOCONFIG");
-
-	return name ? name : "include/config/auto.conf";
+// 	char *name = getenv("KCONFIG_AUTOCONFIG");
+// 
+// 	return name ? name : "include/config/auto.conf";
+	return autoconfig_name;
 }
 
 static char *conf_expand_value(const char *in)
@@ -839,8 +841,13 @@ static int conf_split_config(void)
 	name = conf_get_autoconfig_name();
 	conf_read_simple(name, S_DEF_AUTO);
 
-	if (chdir("include/config"))
-		return 1;
+	if (chdir("tmp")) {
+		if (mkdir("tmp", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))
+			return 1;
+		else
+			if (chdir("tmp"))
+				return 1;
+	}
 
 	res = 0;
 	for_all_symbols(i, sym) {
@@ -933,29 +940,32 @@ static int conf_split_config(void)
 		close(fd);
 	}
 out:
-	if (chdir("../.."))
+	if (chdir("..")) {
 		return 1;
+	}
+
 
 	return res;
 }
 
-int conf_write_autoconf(void)
+int conf_write_autoconf(const char* filename)
 {
 	struct symbol *sym;
-	const char *name;
+	autoconfig_name=(char*)filename;
+	const char *name=conf_get_autoconfig_name();
 	FILE *out, *tristate, *out_h;
 	int i;
 
-	sym_clear_all_valid();
-
 	file_write_dep("include/config/auto.conf.cmd");
 
-	if (conf_split_config())
+	if (conf_split_config()) {
 		return 1;
+	}
 
 	out = fopen(".tmpconfig", "w");
-	if (!out)
+	if (!out) {
 		return 1;
+	}
 
 	tristate = fopen(".tmpconfig_tristate", "w");
 	if (!tristate) {
@@ -969,7 +979,6 @@ int conf_write_autoconf(void)
 		fclose(tristate);
 		return 1;
 	}
-
 	conf_write_heading(out, &kconfig_printer_cb, NULL);
 
 	conf_write_heading(tristate, &tristate_printer_cb, NULL);
@@ -992,23 +1001,10 @@ int conf_write_autoconf(void)
 	fclose(tristate);
 	fclose(out_h);
 
-	name = getenv("KCONFIG_AUTOHEADER");
-	if (!name)
-		name = "include/generated/autoconf.h";
-	if (rename(".tmpconfig.h", name))
+	
+	if (rename(".tmpconfig", name)) {
 		return 1;
-	name = getenv("KCONFIG_TRISTATE");
-	if (!name)
-		name = "include/config/tristate.conf";
-	if (rename(".tmpconfig_tristate", name))
-		return 1;
-	name = conf_get_autoconfig_name();
-	/*
-	 * This must be the last step, kbuild has a dependency on auto.conf
-	 * and this marks the successful completion of the previous steps.
-	 */
-	if (rename(".tmpconfig", name))
-		return 1;
+	}
 
 	return 0;
 }

@@ -672,7 +672,7 @@ int main(int ac, char **av)
 			fprintf(stderr, _("\n*** Error during writing of the configuration.\n\n"));
 			exit(1);
 		}
-		if (conf_write_autoconf()) {
+		if (conf_write_autoconf("autoconf.h")) {
 			fprintf(stderr, _("\n*** Error during update of the configuration.\n\n"));
 			return 1;
 		}
