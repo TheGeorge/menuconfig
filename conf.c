@@ -472,7 +472,7 @@ static void conf_usage(const char *progname)
 	printf("  --listnewconfig           List new options\n");
 	printf("  --oldaskconfig            Start a new configuration using a line-oriented program\n");
 	printf("  --oldconfig               Update a configuration using a provided .config as base\n");
-	printf("  --silentoldconfig         Same as oldconfig, but quietly, additionally update deps\n");
+	printf("  --silentoldconfig <file>  Same as oldconfig, but quietly; write header to <file>\n");
 	printf("  --olddefconfig            Same as silentoldconfig but sets new symbols to their default value\n");
 	printf("  --oldnoconfig             An alias of olddefconfig\n");
 	printf("  --defconfig <file>        New config with default defined in <file>\n");
