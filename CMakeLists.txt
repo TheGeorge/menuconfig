@@ -4,7 +4,7 @@ include_directories("${PROJECT_SOURCE_DIR}/lxdialog")
 add_subdirectory(lxdialog)
 
 set(CURSES_USE_NCURSES TRUE)
-find_package(Curses)
+find_package(Curses REQUIRED)
 
 add_library(zconf zconf.tab.c)
 
