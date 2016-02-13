@@ -32,7 +32,17 @@
 # define gettext(Msgid) ((const char *) (Msgid))
 #endif
 
-#include <ncursesw/curses.h>
+#if HAVE_NCURSES_NCURSES_H
+# include <ncurses/ncurses.h>
+#elif HAVE_NCURSES_H
+# include <ncurses.h>
+#elif HAVE_NCURSES_CURSES_H
+# include <ncurses/curses.h>
+#elif HAVE_CURSES_H
+# include <curses.h>
+#else /* Fallback */
+# include <ncurses.h>
+#endif
 
 #define TR(params) _tracef params
 
