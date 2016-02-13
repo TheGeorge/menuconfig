@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
+set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)
 
 if (CURSES_HAVE_CURSES_H)
