@@ -15,6 +15,7 @@ struct file *file_lookup(const char *name)
 {
 	struct file *file;
 	const char *file_name = sym_expand_string_value(name);
+	char *abs_file_name = realpath(file_name, NULL);
 
 	for (file = file_list; file; file = file->next) {
 		if (!strcmp(name, file->name)) {
@@ -26,6 +27,7 @@ struct file *file_lookup(const char *name)
 	file = malloc(sizeof(*file));
 	memset(file, 0, sizeof(*file));
 	file->name = file_name;
+	file->abs_name = abs_file_name;
 	file->next = file_list;
 	file_list = file;
 	return file;
