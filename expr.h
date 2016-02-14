@@ -21,6 +21,7 @@ struct file {
 	struct file *next;
 	struct file *parent;
 	const char *name;
+	char *abs_name;
 	int lineno;
 };
 

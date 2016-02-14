@@ -86,6 +86,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
+#include <libgen.h>
+
+#ifndef PATH_MAX
+# define PATH_MAX 4096
+#endif
 
 #include "lkc.h"
 
@@ -1418,6 +1424,8 @@ yyparse ()
     YYSTYPE *yyvsp;
 
     YYSIZE_T yystacksize;
+    char abs_path[PATH_MAX];
+    const char *path, *base;
 
   int yyn;
   int yyresult;
@@ -1900,8 +1908,11 @@ yyreduce:
   case 83:
 
     {
-	printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), (yyvsp[(2) - (3)].string));
-	zconf_nextfile((yyvsp[(2) - (3)].string));
+	path = yyvsp[(2) - (3)].string;
+	base = dirname(current_file->abs_name);
+	snprintf(abs_path, sizeof(abs_path), "%s/%s", base, path);
+	printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), path);
+	zconf_nextfile(abs_path);
 ;}
     break;
 
