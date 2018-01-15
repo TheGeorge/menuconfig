@@ -89,3 +89,7 @@ config TRISTATE_PARAM
 menu "Subconfmenu"
 	source ../test/subconfig
 endmenu
+
+menu "Subconfmenu2"
+	source ../test/subconfig2
+endmenu

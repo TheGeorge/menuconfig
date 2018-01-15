@@ -1908,8 +1908,10 @@ yyreduce:
   case 83:
 
     {
+	char tmp_abs_name[256];
 	path = yyvsp[(2) - (3)].string;
-	base = dirname(current_file->abs_name);
+	strncpy(tmp_abs_name, current_file->abs_name, 255);
+	base = dirname(tmp_abs_name);
 	snprintf(abs_path, sizeof(abs_path), "%s/%s", base, path);
 	printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), path);
 	zconf_nextfile(abs_path);
